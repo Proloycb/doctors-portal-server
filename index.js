@@ -33,10 +33,11 @@ async function run() {
         const serviceCollection = client.db('doctors_user').collection('service');
         const bookingCollection = client.db('doctors_user').collection('booking');
         const userCollection = client.db('doctors_user').collection('users');
+        const doctorCollection = client.db('doctors_user').collection('doctors');
 
         app.get('/service', async (req, res) => {
             const query = {};
-            const cursor = serviceCollection.find(query);
+            const cursor = serviceCollection.find(query).project({name: 1});
             const service = await cursor.toArray();
             res.send(service);
         })
@@ -126,6 +127,12 @@ async function run() {
             }
             const result = await bookingCollection.insertOne(booking);
             return res.send({ success: true, result });
+        })
+
+        app.post('/doctor', async (req, res) => {
+            const doctor = req.body;
+            const result = await doctorCollection.insertOne(doctor);
+            res.send(result);
         })
     }
     finally { }
